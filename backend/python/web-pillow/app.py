@@ -1,4 +1,5 @@
 import base64
+import io
 import os
 
 from PIL import Image, ImageEnhance, ImageFilter
@@ -20,7 +21,7 @@ filters = {'Blur': ImageFilter.BLUR,
 
 @app.route('/enhance', methods=['PUT'])
 def enhance_image():
-    body = request.form
+    body = request.json
     image_name = body.get('filename')
     image_decoded = base64.b64decode(body.get('image'))
     color = body.get('color')
@@ -33,30 +34,38 @@ def enhance_image():
     brightness_enhanced_img = ImageEnhance.Brightness(contrast_enhanced_img).enhance(brightness)
     sharpness_enhanced_img = ImageEnhance.Sharpness(brightness_enhanced_img).enhance(sharpness)
     os.remove(image_name)
-    return jsonify(filename=image_name, image=base64.b64encode(sharpness_enhanced_img))
+    image_byte_array = convert_to_byte_array(sharpness_enhanced_img)
+    return jsonify(filename=image_name, image=str(base64.b64encode(image_byte_array))[2:-1])
 
 
 @app.route('/filter', methods=['PUT'])
 def filter_image():
-    body = request.form
+    body = request.json
     image_name = body.get('filename')
     image_decoded = base64.b64decode(body.get('image'))
     filter_name = body.get('filter')
     image = open_image(image_decoded, image_name)
     filtered_image = image.filter(filters[filter_name])
     os.remove(image_name)
-    return jsonify(filename=image_name, image=base64.b64encode(filtered_image))
+    image_byte_array = convert_to_byte_array(filtered_image)
+    return jsonify(filename=image_name, image=str(base64.b64encode(image_byte_array))[2:-1])
 
 
 @app.route('/filter/all', methods=['GET'])
 def get_all_filter_names():
-    return jsonify(filters=list(filters.keys()))
+    return jsonify(list(filters.keys()))
 
 
 def open_image(img_decoded, img_name):
     with open(img_name, 'wb') as img_file:
         img_file.write(img_decoded)
     return Image.open(img_name)
+
+
+def convert_to_byte_array(img):
+    image_byte_array = io.BytesIO()
+    img.save(image_byte_array, format='PNG')
+    return image_byte_array.getvalue()
 
 
 if __name__ == '__main__':
