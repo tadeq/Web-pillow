@@ -39,6 +39,7 @@ public class PillowClient {
     }
 
     public ImageResponseDto enhanceImage(ImageEnhanceDto imageEnhanceDto) throws IOException, InterruptedException {
+        OBJECT_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         String requestBody = OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
                 .writeValueAsString(imageEnhanceDto);
         HttpResponse<String> response = sendModifyImageRequest(ENHANCE_PATH, requestBody);

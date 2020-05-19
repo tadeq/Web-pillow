@@ -1,6 +1,7 @@
 package pl.edu.agh.webpillow;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ import java.io.IOException;
 @RequestMapping(value = "/")
 public class Controller {
 
+    private static final String WEBAPP_URL = "http://localhost:3000";
+
     private final PillowClient pillowClient;
 
     @Autowired
@@ -21,6 +24,7 @@ public class Controller {
     }
 
     @PutMapping(value = "enhance")
+    @CrossOrigin(origins = WEBAPP_URL)
     public ResponseEntity<?> enhanceImage(@RequestBody ImageEnhanceDto imageEnhanceDto) {
         try {
             return ResponseEntity.ok(pillowClient.enhanceImage(imageEnhanceDto));
@@ -30,6 +34,7 @@ public class Controller {
     }
 
     @PutMapping(value = "filter")
+    @CrossOrigin(origins = WEBAPP_URL)
     public ResponseEntity<?> applyFilter(@RequestBody ImageFilterDto imageFilterDto) {
         try {
             return ResponseEntity.ok(pillowClient.applyFilter(imageFilterDto));
@@ -39,6 +44,7 @@ public class Controller {
     }
 
     @GetMapping(value = "filter/all")
+    @CrossOrigin(origins = WEBAPP_URL)
     public ResponseEntity<?> getAvailableFilters() {
         try {
             return ResponseEntity.ok(pillowClient.getAvailableFilters());
