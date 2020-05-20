@@ -34,7 +34,7 @@ def enhance_image():
     brightness_enhanced_img = ImageEnhance.Brightness(contrast_enhanced_img).enhance(brightness)
     sharpness_enhanced_img = ImageEnhance.Sharpness(brightness_enhanced_img).enhance(sharpness)
     os.remove(image_name)
-    image_byte_array = convert_to_byte_array(sharpness_enhanced_img)
+    image_byte_array = convert_to_byte_array(sharpness_enhanced_img, image_name)
     return jsonify(filename=image_name, image=str(base64.b64encode(image_byte_array))[2:-1])
 
 
@@ -47,7 +47,7 @@ def filter_image():
     image = open_image(image_decoded, image_name)
     filtered_image = image.filter(filters[filter_name])
     os.remove(image_name)
-    image_byte_array = convert_to_byte_array(filtered_image)
+    image_byte_array = convert_to_byte_array(filtered_image, image_name)
     return jsonify(filename=image_name, image=str(base64.b64encode(image_byte_array))[2:-1])
 
 
@@ -62,9 +62,9 @@ def open_image(img_decoded, img_name):
     return Image.open(img_name)
 
 
-def convert_to_byte_array(img):
+def convert_to_byte_array(img, filename):
     image_byte_array = io.BytesIO()
-    img.save(image_byte_array, format='PNG')
+    img.save(image_byte_array, format=filename.split('.')[-1])
     return image_byte_array.getvalue()
 
 

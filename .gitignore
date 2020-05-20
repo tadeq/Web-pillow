@@ -1,0 +1,7 @@
+backend/java/web-pillow/.gradle/
+backend/java/web-pillow/.idea/
+backend/java/web-pillow/build/
+backend/python/web-pillow/.idea/
+backend/python/web-pillow/__pycache__/
+backend/python/web-pillow/venv/
+frontend/web-pillow/.idea/
