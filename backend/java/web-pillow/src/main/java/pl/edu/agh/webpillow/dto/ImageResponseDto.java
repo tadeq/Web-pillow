@@ -4,15 +4,6 @@ public class ImageResponseDto {
     private String filename;
     private String image;
 
-    public ImageResponseDto() {
-    }
-
-    public ImageResponseDto(String filename, String image) {
-        this.filename = filename;
-        this.image = image;
-    }
-
-
     public String getFilename() {
         return filename;
     }

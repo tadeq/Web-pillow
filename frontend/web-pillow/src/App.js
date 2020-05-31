@@ -19,8 +19,12 @@ import SaveIcon from '@material-ui/icons/Save';
 import SendIcon from '@material-ui/icons/Send';
 import FilterIcon from '@material-ui/icons/Filter';
 import PaletteIcon from '@material-ui/icons/Palette';
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
+import {withStyles} from '@material-ui/core/styles';
 import './App.css';
 import api from './api';
+import styles from "./styles";
+
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpg', 'image/jpeg', 'image/png'];
 const NO_FILTER = 'No filter';
@@ -42,6 +46,7 @@ class App extends React.Component {
         discardDialogOpen: false,
         downloadDialogOpen: false,
         modificationType: MODIFICATION_ENHANCE,
+        compareClicked: false,
     };
 
     componentDidMount() {
@@ -228,117 +233,145 @@ class App extends React.Component {
         });
     };
 
+    handleCompareButtonClick = () => {
+        this.setState({
+            compareClicked: true,
+        })
+    };
+
+    handleCompareButtonRelease = () => {
+        this.setState({
+            compareClicked: false,
+        })
+    };
+
     render() {
-        console.log(this.state.originalImage);
+        const {classes} = this.props;
         return (
             <div className='App'>
-                <Button variant='contained' component='label' startIcon={<SendIcon/>}
-                        disabled={this.state.originalImage !== undefined}>
-                    Upload File
-                    <input hidden type='file' accept='.jpg,.jpeg,.png' onChange={this.handleImageLoad}/>
-                </Button>
-                <Button variant='contained' color='primary' startIcon={<SaveIcon/>}
-                        disabled={this.state.originalImage === undefined} onClick={this.handleDownloadDialogOpen}>
-                    Save image
-                </Button>
-                <Dialog open={this.state.downloadDialogOpen} onClose={this.handleDownloadDialogCloseAndPreserveImage}>
-                    <DialogTitle>Download image</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Do you want to keep the image in the editor?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleDownloadDialogCloseAndPreserveImage} color='primary'>
-                            Yes
-                        </Button>
-                        <Button onClick={this.handleDownloadDialogClose} color='primary'>
-                            No
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-                <Button variant='contained' color='secondary' startIcon={<DeleteIcon/>}
-                        disabled={this.state.originalImage === undefined} onClick={this.handleDiscardDialogOpen}>
-                    Discard Changes
-                </Button>
-                <Dialog open={this.state.discardDialogOpen} onClose={this.handleDiscardDialogClose}>
-                    <DialogTitle>Discard changes</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Are you sure you want to discard all changes?<br/>
-                            The image will be removed from editor.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.resetState} color='primary'>
-                            Yes
-                        </Button>
-                        <Button onClick={this.handleDiscardDialogClose} color='primary'>
-                            No
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-                <img src={this.state.editedImage} alt=''/>
-                <ToggleButtonGroup value={this.state.modificationType} exclusive
-                                   onChange={this.handleModificationTypeChange}>
-                    <ToggleButton value={MODIFICATION_ENHANCE} children={<PaletteIcon/>}
-                                  disabled={this.state.originalImage === undefined}/>
-                    <ToggleButton value={MODIFICATION_FILTER} children={<FilterIcon/>}
-                                  disabled={this.state.originalImage === undefined}/>
-                </ToggleButtonGroup>
-                <Typography id='brightness-slider' align='left' gutterBottom>
-                    Brightness
-                </Typography>
-                <Slider
-                    defaultValue={1.0}
-                    control={this.state.brightnessSliderValue}
-                    valueLabelDisplay='auto'
-                    step={0.1}
-                    min={0}
-                    max={5}
-                    disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_ENHANCE}
-                    onChangeCommitted={this.handleBrightnessSliderValueChange}
-                />
-                <Typography id='color-slider' align='left' gutterBottom>
-                    Color
-                </Typography>
-                <Slider
-                    defaultValue={1.0}
-                    control={this.state.colorSliderValue}
-                    valueLabelDisplay='auto'
-                    step={0.1}
-                    min={0}
-                    max={5}
-                    disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_ENHANCE}
-                    onChangeCommitted={this.handleColorSliderValueChange}
-                />
-                <Typography id='contrast-slider' align='left' gutterBottom>
-                    Contrast
-                </Typography>
-                <Slider
-                    defaultValue={1.0}
-                    control={this.state.contrastSliderValue}
-                    valueLabelDisplay='auto'
-                    step={0.1}
-                    min={0}
-                    max={5}
-                    disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_ENHANCE}
-                    onChangeCommitted={this.handleContrastSliderValueChange}
-                />
-                <Typography id='sharpness-slider' align='left' gutterBottom>
-                    Sharpness
-                </Typography>
-                <Slider
-                    defaultValue={1.0}
-                    control={this.state.sharpnessSliderValue}
-                    valueLabelDisplay='auto'
-                    step={0.1}
-                    min={0}
-                    max={5}
-                    disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_ENHANCE}
-                    onChangeCommitted={this.handleSharpnessSliderValueChange}
-                />
-                <FormControl>
+                <div className={classes.top_buttons_box}>
+                    <Button className={classes.top_button} variant='contained' component='label' startIcon={<SendIcon/>}
+                            disabled={this.state.originalImage !== undefined}>
+                        Upload File
+                        <input hidden type='file' accept='.jpg,.jpeg,.png' onChange={this.handleImageLoad}/>
+                    </Button>
+                    <Button className={classes.top_button} variant='contained' color='primary' startIcon={<SaveIcon/>}
+                            disabled={this.state.originalImage === undefined} onClick={this.handleDownloadDialogOpen}>
+                        Save image
+                    </Button>
+                    <Dialog open={this.state.downloadDialogOpen}
+                            onClose={this.handleDownloadDialogCloseAndPreserveImage}>
+                        <DialogTitle>Download image</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Do you want to keep the image in the editor?
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.handleDownloadDialogCloseAndPreserveImage} color='primary'>
+                                Yes
+                            </Button>
+                            <Button onClick={this.handleDownloadDialogClose} color='primary'>
+                                No
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Button className={classes.top_button} variant='contained' color='secondary'
+                            startIcon={<DeleteIcon/>}
+                            disabled={this.state.originalImage === undefined} onClick={this.handleDiscardDialogOpen}>
+                        Discard Changes
+                    </Button>
+                    <Dialog open={this.state.discardDialogOpen} onClose={this.handleDiscardDialogClose}>
+                        <DialogTitle>Discard changes</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Are you sure you want to discard all changes?<br/>
+                                The image will be removed from editor.
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.resetState} color='primary'>
+                                Yes
+                            </Button>
+                            <Button onClick={this.handleDiscardDialogClose} color='primary'>
+                                No
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Button className={classes.top_button} variant='contained' startIcon={<RemoveRedEyeIcon/>}
+                            disabled={this.state.originalImage === undefined}
+                            onMouseDown={this.handleCompareButtonClick}
+                            onMouseUp={this.handleCompareButtonRelease}>
+                        Show original
+                    </Button>
+                </div>
+                <div className={classes.image_box}>
+                    <img src={this.state.compareClicked ? this.state.originalImage : this.state.editedImage} alt=''/>
+                </div>
+                <div className={classes.modification_buttons_box}>
+                    <ToggleButtonGroup value={this.state.modificationType} exclusive
+                                       onChange={this.handleModificationTypeChange}>
+                        <ToggleButton value={MODIFICATION_ENHANCE}
+                                      children={<PaletteIcon/>} disabled={this.state.originalImage === undefined}/>
+                        <ToggleButton value={MODIFICATION_FILTER}
+                                      children={<FilterIcon/>} disabled={this.state.originalImage === undefined}/>
+                    </ToggleButtonGroup>
+                </div>
+                <div className={classes.sliders_box}>
+                    <Typography id='brightness-slider' align='left' gutterBottom>
+                        Brightness
+                    </Typography>
+                    <Slider
+                        defaultValue={1.0}
+                        control={this.state.brightnessSliderValue}
+                        valueLabelDisplay='auto'
+                        step={0.1}
+                        min={0}
+                        max={5}
+                        disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_ENHANCE}
+                        onChangeCommitted={this.handleBrightnessSliderValueChange}
+                    />
+                    <Typography id='color-slider' align='left' gutterBottom>
+                        Color
+                    </Typography>
+                    <Slider
+                        defaultValue={1.0}
+                        control={this.state.colorSliderValue}
+                        valueLabelDisplay='auto'
+                        step={0.1}
+                        min={0}
+                        max={5}
+                        disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_ENHANCE}
+                        onChangeCommitted={this.handleColorSliderValueChange}
+                    />
+                    <Typography id='contrast-slider' align='left' gutterBottom>
+                        Contrast
+                    </Typography>
+                    <Slider
+                        defaultValue={1.0}
+                        control={this.state.contrastSliderValue}
+                        valueLabelDisplay='auto'
+                        step={0.1}
+                        min={0}
+                        max={5}
+                        disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_ENHANCE}
+                        onChangeCommitted={this.handleContrastSliderValueChange}
+                    />
+                    <Typography id='sharpness-slider' align='left' gutterBottom>
+                        Sharpness
+                    </Typography>
+                    <Slider
+                        defaultValue={1.0}
+                        control={this.state.sharpnessSliderValue}
+                        valueLabelDisplay='auto'
+                        step={0.1}
+                        min={0}
+                        max={5}
+                        disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_ENHANCE}
+                        onChangeCommitted={this.handleSharpnessSliderValueChange}
+                    />
+                </div>
+                <FormControl className={classes.filtersForm}>
                     <RadioGroup name={MODIFICATION_FILTER} control={this.state.selectedFilter} defaultValue={NO_FILTER}
                                 onChange={this.handleFilterChange}>
                         {this.state.filters.map(filter => <FormControlLabel value={filter} key={filter}
@@ -353,4 +386,5 @@ class App extends React.Component {
 }
 
 
-export default App;
+export default withStyles(styles)(App);
+
