@@ -1,17 +1,18 @@
 import React from 'react';
 import {
-    Typography,
-    Slider,
     Button,
-    FormControl,
-    FormControlLabel,
-    Radio,
-    RadioGroup,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
+    FormControl,
+    FormControlLabel,
+    Grid,
+    Radio,
+    RadioGroup,
+    Slider,
+    Typography,
 } from '@material-ui/core';
 import {ToggleButton, ToggleButtonGroup} from '@material-ui/lab'
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -20,10 +21,11 @@ import SendIcon from '@material-ui/icons/Send';
 import FilterIcon from '@material-ui/icons/Filter';
 import PaletteIcon from '@material-ui/icons/Palette';
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
-import {withStyles} from '@material-ui/core/styles';
+import {ThemeProvider, withStyles} from '@material-ui/core/styles';
 import './App.css';
 import api from './api';
 import styles from "./styles";
+import theme from "./muiThemes";
 
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpg', 'image/jpeg', 'image/png'];
@@ -118,6 +120,7 @@ class App extends React.Component {
             discardDialogOpen: false,
             downloadDialogOpen: false,
             modificationType: MODIFICATION_ENHANCE,
+            compareClicked: false,
         })
     };
 
@@ -133,6 +136,18 @@ class App extends React.Component {
         xhr.open('GET', imageUrl);
         xhr.responseType = 'blob';
         xhr.send();
+    };
+
+    handleModificationEnhanceSelect = () => {
+        this.setState({
+            modificationType: MODIFICATION_ENHANCE
+        }, this.enhanceImage)
+    };
+
+    handleModificationFilterSelect = () => {
+        this.setState({
+            modificationType: MODIFICATION_FILTER
+        }, this.applyFilter)
     };
 
     handleModificationTypeChange = (event) => {
@@ -246,9 +261,13 @@ class App extends React.Component {
     };
 
     render() {
+        //TODO fix filter/enhance after discarding and loading another image
         const {classes} = this.props;
         return (
-            <div className='App'>
+            <div className='body'>
+                <div className={classes.image_box}>
+                    <img src={this.state.compareClicked ? this.state.originalImage : this.state.editedImage} alt=''/>
+                </div>
                 <div className={classes.top_buttons_box}>
                     <Button className={classes.top_button} variant='contained' component='label' startIcon={<SendIcon/>}
                             disabled={this.state.originalImage !== undefined}>
@@ -305,16 +324,20 @@ class App extends React.Component {
                         Show original
                     </Button>
                 </div>
-                <div className={classes.image_box}>
-                    <img src={this.state.compareClicked ? this.state.originalImage : this.state.editedImage} alt=''/>
-                </div>
                 <div className={classes.modification_buttons_box}>
-                    <ToggleButtonGroup value={this.state.modificationType} exclusive
-                                       onChange={this.handleModificationTypeChange}>
-                        <ToggleButton value={MODIFICATION_ENHANCE}
-                                      children={<PaletteIcon/>} disabled={this.state.originalImage === undefined}/>
-                        <ToggleButton value={MODIFICATION_FILTER}
-                                      children={<FilterIcon/>} disabled={this.state.originalImage === undefined}/>
+                    <ToggleButtonGroup value={this.state.modificationType} exclusive>
+                        <ThemeProvider theme={theme}>
+                            <ToggleButton value={MODIFICATION_ENHANCE} onClick={this.handleModificationEnhanceSelect}
+                                          selected={this.state.modificationType === MODIFICATION_ENHANCE}
+                                          disabled={this.state.originalImage === undefined}>
+                                <PaletteIcon className={classes.modification_icon}/>Enhance
+                            </ToggleButton>
+                            <ToggleButton value={MODIFICATION_FILTER} onClick={this.handleModificationFilterSelect}
+                                          selected={this.state.modificationType === MODIFICATION_FILTER}
+                                          disabled={this.state.originalImage === undefined}>
+                                <FilterIcon className={classes.modification_icon}/>Filter
+                            </ToggleButton>
+                        </ThemeProvider>
                     </ToggleButtonGroup>
                 </div>
                 <div className={classes.sliders_box}>
@@ -374,10 +397,14 @@ class App extends React.Component {
                 <FormControl className={classes.filtersForm}>
                     <RadioGroup name={MODIFICATION_FILTER} control={this.state.selectedFilter} defaultValue={NO_FILTER}
                                 onChange={this.handleFilterChange}>
-                        {this.state.filters.map(filter => <FormControlLabel value={filter} key={filter}
-                                                                            control={<Radio color='primary'/>}
-                                                                            disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_FILTER}
-                                                                            label={filter}/>)}
+                        <Grid container>
+                            {this.state.filters.map(filter => <Grid item xs={6}><FormControlLabel value={filter}
+                                                                                                  key={filter}
+                                                                                                  control={<Radio
+                                                                                                      color='primary'/>}
+                                                                                                  disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_FILTER}
+                                                                                                  label={filter}/></Grid>)}
+                        </Grid>
                     </RadioGroup>
                 </FormControl>
             </div>

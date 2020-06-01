@@ -1,6 +1,6 @@
 const styles = {
     body: {
-        backgroundImage: 'url(http://www.transparenttextures.com/patterns/subtle-white-feathers.png);'
+        // backgroundImage:
     },
     top_buttons_box: {
         marginTop: '2vh',
@@ -17,8 +17,14 @@ const styles = {
         textAlign: 'center',
     },
     modification_buttons_box: {
+        marginLeft: '6vw',
+        marginRight: '5vw',
         marginTop: '2vh',
+        marginBottom: '2vh',
         textAlign: 'center',
+    },
+    modification_icon: {
+        marginRight: '0.5vw',
     },
     sliders_box: {
         float: 'left',
@@ -27,7 +33,7 @@ const styles = {
     },
     filtersForm: {
         marginLeft: '5vw',
-        width: '20vw',
+        width: '40vw',
     }
 };
 
