@@ -24,8 +24,8 @@ import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 import {ThemeProvider, withStyles} from '@material-ui/core/styles';
 import './App.css';
 import api from './api';
-import styles from "./styles";
-import theme from "./muiThemes";
+import styles from './styles';
+import theme from './muiThemes';
 
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpg', 'image/jpeg', 'image/png'];
@@ -76,9 +76,9 @@ class App extends React.Component {
     };
 
     downloadImage = () => {
-        const link = document.createElement("a");
+        const link = document.createElement('a');
         link.href = this.state.editedImage;
-        link.setAttribute("download", this.state.filename);
+        link.setAttribute('download', this.state.filename);
         document.body.appendChild(link);
         link.click();
     };
@@ -108,6 +108,7 @@ class App extends React.Component {
     };
 
     resetState = () => {
+        document.getElementById('img_input').value = '';
         this.setState({
             filename: undefined,
             originalImage: undefined,
@@ -116,7 +117,7 @@ class App extends React.Component {
             colorSliderValue: 1.0,
             contrastSliderValue: 1.0,
             sharpnessSliderValue: 1.0,
-            selectedFilter: undefined,
+            selectedFilter: NO_FILTER,
             discardDialogOpen: false,
             downloadDialogOpen: false,
             modificationType: MODIFICATION_ENHANCE,
@@ -148,18 +149,6 @@ class App extends React.Component {
         this.setState({
             modificationType: MODIFICATION_FILTER
         }, this.applyFilter)
-    };
-
-    handleModificationTypeChange = (event) => {
-        this.setState({
-            modificationType: event.target.value,
-        }, () => {
-            if (this.state.modificationType === MODIFICATION_ENHANCE) {
-                this.enhanceImage();
-            } else if (this.state.modificationType === MODIFICATION_FILTER) {
-                this.applyFilter();
-            }
-        })
     };
 
     handleBrightnessSliderValueChange = (event) => {
@@ -260,6 +249,18 @@ class App extends React.Component {
         })
     };
 
+    mapToGridItem = (filterName) => {
+        return (
+            <Grid item xs={6}>
+                <FormControlLabel value={filterName}
+                                  key={filterName}
+                                  control={<Radio color='primary'/>}
+                                  disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_FILTER}
+                                  label={filterName}/>
+            </Grid>
+        )
+    };
+
     render() {
         //TODO fix filter/enhance after discarding and loading another image
         const {classes} = this.props;
@@ -272,7 +273,8 @@ class App extends React.Component {
                     <Button className={classes.top_button} variant='contained' component='label' startIcon={<SendIcon/>}
                             disabled={this.state.originalImage !== undefined}>
                         Upload File
-                        <input hidden type='file' accept='.jpg,.jpeg,.png' onChange={this.handleImageLoad}/>
+                        <input id='img_input' hidden type='file' accept='.jpg,.jpeg,.png'
+                               onChange={this.handleImageLoad}/>
                     </Button>
                     <Button className={classes.top_button} variant='contained' color='primary' startIcon={<SaveIcon/>}
                             disabled={this.state.originalImage === undefined} onClick={this.handleDownloadDialogOpen}>
@@ -398,12 +400,7 @@ class App extends React.Component {
                     <RadioGroup name={MODIFICATION_FILTER} control={this.state.selectedFilter} defaultValue={NO_FILTER}
                                 onChange={this.handleFilterChange}>
                         <Grid container>
-                            {this.state.filters.map(filter => <Grid item xs={6}><FormControlLabel value={filter}
-                                                                                                  key={filter}
-                                                                                                  control={<Radio
-                                                                                                      color='primary'/>}
-                                                                                                  disabled={this.state.originalImage === undefined || this.state.modificationType !== MODIFICATION_FILTER}
-                                                                                                  label={filter}/></Grid>)}
+                            {this.state.filters.map(this.mapToGridItem)}
                         </Grid>
                     </RadioGroup>
                 </FormControl>
@@ -412,6 +409,4 @@ class App extends React.Component {
     }
 }
 
-
 export default withStyles(styles)(App);
-
