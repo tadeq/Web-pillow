@@ -1,4 +1,5 @@
 # Web pillow
+![UI](https://user-images.githubusercontent.com/33002299/83679350-8ff96e00-a5df-11ea-8527-de5a31dfbb30.PNG)
 Web application for image processing using Python library Pillow. The application consists of three parts:
 * web client (JavaScript ES6, React.js)
 * proxy server (Java 11, Spring Boot)
