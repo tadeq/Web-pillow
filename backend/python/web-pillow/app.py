@@ -64,7 +64,9 @@ def open_image(img_decoded, img_name):
 
 def convert_to_byte_array(img, filename):
     image_byte_array = io.BytesIO()
-    img.save(image_byte_array, format=filename.split('.')[-1])
+    img_format = filename.split('.')[-1]
+    img_format = 'JPEG' if img_format.upper() == 'JPG' else img_format
+    img.save(image_byte_array, format=img_format)
     return image_byte_array.getvalue()
 
 

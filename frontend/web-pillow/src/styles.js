@@ -13,8 +13,12 @@ const styles = {
         width: '19vw',
     },
     image_box: {
-        marginTop: '2vh',
         textAlign: 'center',
+    },
+    image: {
+        height: '52vh',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '100%',
     },
     modification_buttons_box: {
         marginLeft: '6vw',

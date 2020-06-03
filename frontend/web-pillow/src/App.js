@@ -266,7 +266,8 @@ class App extends React.Component {
         return (
             <div className={classes.body}>
                 <div className={classes.image_box}>
-                    <img src={this.state.compareClicked ? this.state.originalImage : this.state.editedImage} alt=''/>
+                    <img className={classes.image}
+                         src={this.state.compareClicked ? this.state.originalImage : this.state.editedImage} alt=''/>
                 </div>
                 <div className={classes.top_buttons_box}>
                     <Button className={classes.top_button} variant='contained' component='label' startIcon={<SendIcon/>}
