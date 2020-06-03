@@ -1,6 +1,6 @@
 const styles = {
     body: {
-        // backgroundImage:
+        backgroundImage: 'linear-gradient(lightblue, white)',
     },
     top_buttons_box: {
         marginTop: '2vh',

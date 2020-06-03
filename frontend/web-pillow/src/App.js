@@ -262,10 +262,9 @@ class App extends React.Component {
     };
 
     render() {
-        //TODO fix filter/enhance after discarding and loading another image
         const {classes} = this.props;
         return (
-            <div className='body'>
+            <div className={classes.body}>
                 <div className={classes.image_box}>
                     <img src={this.state.compareClicked ? this.state.originalImage : this.state.editedImage} alt=''/>
                 </div>
